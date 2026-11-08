@@ -1,0 +1,21 @@
+
+[
+  {
+    "id": "FAQ001",
+    "topic": "check-in",
+    "keywords": ["check-in", "check in", "arrival"],
+    "answer": "Check-in begins at 3:00 PM."
+  },
+  {
+    "id": "FAQ002",
+    "topic": "check-out",
+    "keywords": ["check-out", "check out", "departure"],
+    "answer": "Check-out is at 11:00 AM."
+  },
+  {
+    "id": "FAQ003",
+    "topic": "breakfast",
+    "keywords": ["breakfast", "morning meal"],
+    "answer": "Breakfast is available from 7:00 AM to 10:00 AM."
+  }
+]
