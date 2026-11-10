@@ -1,3 +1,4 @@
+import pytest
 from fastapi.testclient import TestClient
 from main import app
 
@@ -45,4 +46,43 @@ def test_missing_question():
     response = client.post("/ask", json={})
 
     assert response.status_code == 422
+
+
+def test_early_checkin_policy_unknown():
+    response = client.post(
+        "/ask",
+        json={"question": "Can I check in early at 10 AM?"}
+    )
+
+    assert response.status_code == 200
+    assert response.json()["source"] is None
+    assert response.json()["answer"] == "I could not find that information."
+
+@pytest.mark.xfail(
+    reason="Keyword matching cannot distinguish early check-in from normal check-in",
+    strict=True
+)
+def test_early_checkin_policy_unknown():
+    response = client.post(
+        "/ask",
+        json={"question": "Can I check in early at 10 AM?"}
+    )
+
+    assert response.status_code == 200
+    assert response.json()["source"] is None
+    assert response.json()["answer"] == "I could not find that information."
+
+@pytest.mark.xfail(
+    reason="Keyword matching cannot distinguish early check-in from normal check-in",
+    strict=True
+)
+def test_breakfast_price_policy_unknown():
+    response = client.post(
+        "/ask",
+        json={"question": "Is breakfast free?"}
+    )
+
+    assert response.status_code == 200
+    assert response.json()["source"] is None
+    assert response.json()["answer"] == "I could not find that information."
 
