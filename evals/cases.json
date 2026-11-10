@@ -1,0 +1,38 @@
+[
+  {
+    "id": "EVAL001",
+    "question": "What time is check-in?",
+    "expected_source": "FAQ001",
+    "expected_answer": "Check-in begins at 3:00 PM."
+  },
+  {
+    "id": "EVAL002",
+    "question": "What time is check-out?",
+    "expected_source": "FAQ002",
+    "expected_answer": "Check-out is at 11:00 AM."
+  },
+  {
+    "id": "EVAL003",
+    "question": "When is breakfast available?",
+    "expected_source": "FAQ003",
+    "expected_answer": "Breakfast is available from 7:00 AM to 10:00 AM."
+  },
+  {
+    "id": "EVAL004",
+    "question": "Does the hotel have a swimming pool?",
+    "expected_source": null,
+    "expected_answer": "I could not find that information."
+  },
+  {
+    "id": "EVAL005",
+    "question": "Can I check in early at 10 AM?",
+    "expected_source": null,
+    "expected_answer": "I could not find that information."
+  },
+  {
+    "id": "EVAL006",
+    "question": "Is breakfast free?",
+    "expected_source": null,
+    "expected_answer": "I could not find that information."
+  }
+]
