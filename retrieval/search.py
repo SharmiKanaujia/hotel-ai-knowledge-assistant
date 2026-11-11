@@ -1,13 +1,14 @@
 
 import re
 from retrieval.loader import load_documents
+from retrieval.chunker import chunk_documents
 
 STOP_WORDS = {"is", "the", "a", "at", "in", "what", "when",
               "does", "hotel", "can", "i", "time"}
 
 
 def search_documents(question):
-    documents = load_documents()
+    documents = chunk_documents(load_documents())
 
     # Convert the question into individual words
     question_words = set(
@@ -26,6 +27,7 @@ def search_documents(question):
 
         if score > 0:
             results.append({
+                "id": document["id"],
                 "source": document["source"],
                 "score": score,
                 "content": document["content"]
