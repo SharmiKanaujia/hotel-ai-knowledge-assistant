@@ -25,4 +25,12 @@ def test_unknown_document():
     )
 
     assert results == []
+
+def test_parking_chunk_retrieval():
+    results = search_documents("Is parking available?")
+
+    assert len(results) > 0
+    assert results[0]["source"] == "parking.md"
+    assert results[0]["id"] == "parking.md#chunk-2"
+    assert "Parking is available." in results[0]["content"]
     
