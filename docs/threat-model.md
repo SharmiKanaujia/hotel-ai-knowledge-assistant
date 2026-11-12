@@ -212,9 +212,11 @@ Location: main.py
 
 Control:
 
-\- Questions must contain at least 1 character.
+\- Leading and trailing whitespace is removed.
 
-\- Questions cannot exceed 500 characters.
+\- Empty and whitespace-only questions are rejected.
+
+\- Questions must contain 1–500 characters after trimming.
 
 \- Invalid questions return HTTP 422.
 
@@ -226,17 +228,17 @@ Automated tests:
 
 \- test\_reject\_oversized\_question
 
+\- test\_reject\_whitespace\_only\_question
+
+\- test\_accept\_exactly\_500\_characters
+
 
 
 Current limitations:
 
-\- Whitespace-only questions are not yet rejected.
-
 \- HTTP request-body size limits are not implemented.
 
 \- Rate limiting is not implemented.
-
-
 
 Related threat: T01
 
