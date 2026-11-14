@@ -22,8 +22,8 @@ def generate_answer(question: str, client=None):
     # Send our RAG prompt to the language model
     response = client.converse(
         modelId=os.getenv(
-            "BEDROCK_MODEL_ID",
-            "amazon.nova-lite-v1:0"
+           "BEDROCK_MODEL_ID",
+           "amazon.nova-lite-v1:0"
         ),
         messages=[
             {
@@ -45,10 +45,17 @@ def generate_answer(question: str, client=None):
         for block in response["output"]["message"]["content"]
     ).strip()
 
+    final_answer = answer or "I could not find that information."
+
+    is_unknown = (
+        final_answer.casefold().rstrip(" .!")
+        == "i could not find that information"
+    )
+
     return {
         "question": question,
-        "answer": answer or "I could not find that information.",
-        "sources": rag_data["sources"]
+        "answer": final_answer,
+        "sources": [] if is_unknown else rag_data["sources"]
     }
 
 
