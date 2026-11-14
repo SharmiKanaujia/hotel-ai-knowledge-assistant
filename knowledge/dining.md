@@ -1,4 +1,4 @@
-\# Dining Information
+# Dining Information
 
 
 
