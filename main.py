@@ -1,7 +1,7 @@
 
 import json
 from pathlib import Path
-
+from rag.llm import generate_answer
 from fastapi import FastAPI
 from typing import Annotated
 from pydantic import BaseModel, StringConstraints
@@ -47,3 +47,6 @@ def ask_question(request: QuestionRequest):
         "answer": "I could not find that information.",
         "source": None
     }
+@app.post("/ask/rag")
+def ask_rag_question(request: QuestionRequest):
+    return generate_answer(request.question)

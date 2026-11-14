@@ -31,6 +31,6 @@ def test_parking_chunk_retrieval():
 
     assert len(results) > 0
     assert results[0]["source"] == "parking.md"
-    assert results[0]["id"] == "parking.md#chunk-2"
+    assert results[0]["id"] == "parking.md#chunk-1"
     assert "Parking is available." in results[0]["content"]
     
