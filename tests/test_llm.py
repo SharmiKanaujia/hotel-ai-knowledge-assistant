@@ -32,3 +32,25 @@ def test_generate_answer_with_mock_bedrock():
 
     assert "Parking is available." in prompt
     assert fake_client.converse.call_count == 1
+
+
+def test_unknown_answer_has_no_sources():
+    fake_client = Mock()
+
+    fake_client.converse.return_value = {
+        "output": {
+            "message": {
+                "content": [
+                    {"text": "I could not find that information."}
+                ]
+            }
+        }
+    }
+
+    result = generate_answer(
+        "Does the hotel provide a free airport shuttle?",
+        client=fake_client
+    )
+
+    assert result["answer"] == "I could not find that information."
+    assert result["sources"] == []
