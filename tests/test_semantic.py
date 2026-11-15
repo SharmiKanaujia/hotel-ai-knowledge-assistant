@@ -16,3 +16,20 @@ def test_semantic_search_finds_parking():
 
     # Parking should be the most relevant document
     assert semantic_results[0]["source"] == "parking.md"
+
+
+def test_semantic_search_filters_unrelated_documents():
+    results = search_semantic(
+        "Does the hotel provide a free airport shuttle?"
+    )
+
+    assert results == []
+
+
+def test_semantic_search_keeps_relevant_breakfast_documents():
+    results = search_semantic(
+        "What time is breakfast served?"
+    )
+
+    assert len(results) > 0
+    assert all(r["source"] == "dining.md" for r in results)
