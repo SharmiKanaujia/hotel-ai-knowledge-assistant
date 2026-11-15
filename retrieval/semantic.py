@@ -6,7 +6,12 @@ from retrieval.loader import load_documents
 from retrieval.chunker import chunk_documents
 
 
-def search_semantic(question, top_k=3):
+def search_semantic(
+    question,
+    top_k=3,
+    min_score=0.65,
+    score_margin=0.10
+):
     chunks = chunk_documents(load_documents())
 
     if not chunks:
@@ -28,7 +33,21 @@ def search_semantic(question, top_k=3):
 
     # Find the highest-scoring chunks
     best_indices = np.argsort(scores)[::-1][:top_k]
+        # No results above our minimum relevance score
+    if len(best_indices) == 0:
+        return []
 
+    top_score = float(scores[best_indices[0]])
+
+    if top_score < min_score:
+        return []
+
+    # Keep only strong matches close to the best result
+    best_indices = [
+        i for i in best_indices
+        if float(scores[i]) >= min_score
+        and top_score - float(scores[i]) <= score_margin
+    ]
     return [
         {
             "id": chunks[int(i)]["id"],

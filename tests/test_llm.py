@@ -54,3 +54,5 @@ def test_unknown_answer_has_no_sources():
 
     assert result["answer"] == "I could not find that information."
     assert result["sources"] == []
+
+    fake_client.converse.assert_not_called()

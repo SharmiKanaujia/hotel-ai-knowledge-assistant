@@ -8,6 +8,15 @@ from rag.pipeline import prepare_rag
 def generate_answer(question: str, client=None):
     # Find relevant hotel information
     rag_data = prepare_rag(question)
+    
+    # No relevant hotel documents found
+    # Return immediately without calling AWS Bedrock
+    if not rag_data["sources"]:
+        return {
+            "question": question,
+            "answer": "I could not find that information.",
+            "sources": []
+        }
 
     # Use an existing client for tests, or create
     # a real AWS Bedrock client
