@@ -1,0 +1,53 @@
+
+name: Docker Build and Smoke Test
+
+on:
+  pull_request:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  docker-test:
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Build Docker image
+        run: docker build -t hotel-ai-copilot:ci .
+
+      - name: Start container
+        run: |
+          docker run -d \
+            --name hotel-ai-copilot \
+            -p 8000:8000 \
+            hotel-ai-copilot:ci
+
+      - name: Wait for FastAPI
+        run: |
+          for i in {1..30}; do
+            if curl -fsS --max-time 3 \
+              http://127.0.0.1:8000/openapi.json > /dev/null; then
+              echo "FastAPI is ready!"
+              exit 0
+            fi
+            sleep 2
+          done
+
+          docker logs hotel-ai-copilot
+          exit 1
+
+      - name: Test hotel API
+        run: |
+          curl -fsS \
+            -X POST http://127.0.0.1:8000/ask \
+            -H "Content-Type: application/json" \
+            -d '{"question":"What time is check-in?"}'
+
+      - name: Show container logs
+        if: always()
+        run: docker logs hotel-ai-copilot || true
