@@ -5,8 +5,15 @@ from rag.llm import generate_answer
 from fastapi import FastAPI
 from typing import Annotated
 from pydantic import BaseModel, StringConstraints
+from fastapi.responses import FileResponse
 
 app = FastAPI(title="Hotel AI Knowledge Assistant")
+
+@app.get("/chat")
+def chat_page():
+    chat_file = Path(__file__).resolve().parent / "static" / "chat.html"
+    return FileResponse(chat_file)
+
 
 class QuestionRequest(BaseModel):
     question: Annotated[
