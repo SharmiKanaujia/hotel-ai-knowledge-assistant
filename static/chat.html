@@ -101,10 +101,12 @@
     <div class="mode-row">
       <label for="answer-mode">Answer Mode:</label>
 
-      <select id="answer-mode">
-        <option value="faq">FAQ - Quick Answers</option>
-        <option value="rag">AI Demo - Simulated Answers (No AWS)</option>
-      </select>
+
+<select id="answer-mode">
+  <option value="faq">FAQ - Quick Answers</option>
+  <option value="rag">AI Demo - Simulated Answers (No AWS)</option>
+  <option value="live-rag" disabled>Real AI - Amazon Bedrock</option>
+</select>
     </div>
 
     <div id="messages" aria-live="polite">
@@ -131,6 +133,35 @@
   const messages = document.getElementById("messages");
   const sendButton = form.querySelector("button");
   const answerMode = document.getElementById("answer-mode");
+
+
+async function loadChatConfig() {
+  const liveOption = answerMode.querySelector(
+    'option[value="live-rag"]'
+  );
+
+  // Keep Real AI disabled until the server confirms availability
+  liveOption.disabled = true;
+
+  try {
+    const response = await fetch("/chat/config");
+
+    if (!response.ok) {
+      throw new Error("Could not load chat configuration");
+    }
+
+    const config = await response.json();
+
+    liveOption.disabled = config.live_rag_enabled !== true;
+
+  } catch (error) {
+    console.error("Chat configuration error:", error);
+    liveOption.disabled = true;
+  }
+}
+
+loadChatConfig();
+
 
   // Display a message in the chat window
   function addMessage(text, sender, source = null) {
@@ -168,9 +199,15 @@
     sendButton.textContent = "Sending...";
 
     try {
-      const endpoint = answerMode.value === "rag"
-         ? "/ask/rag/demo"
-         : "/ask";
+
+const endpoints = {
+  "faq": "/ask",
+  "rag": "/ask/rag/demo",
+  "live-rag": "/ask/rag"
+};
+
+const endpoint = endpoints[answerMode.value] || "/ask";
+
 
       const response = await fetch(endpoint, {
         method: "POST",
