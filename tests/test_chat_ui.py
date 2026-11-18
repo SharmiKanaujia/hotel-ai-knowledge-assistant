@@ -30,3 +30,33 @@ def test_chat_page_has_answer_modes():
 
     # Check that JavaScript knows the demo endpoint
     assert '"/ask/rag/demo"' in html
+
+
+def test_live_ai_config_disabled(monkeypatch):
+    monkeypatch.delenv("ENABLE_LIVE_RAG", raising=False)
+
+    response = client.get("/chat/config")
+
+    assert response.status_code == 200
+    assert response.json()["live_rag_enabled"] is False
+
+
+def test_live_ai_config_enabled(monkeypatch):
+    monkeypatch.setenv("ENABLE_LIVE_RAG", "true")
+
+    response = client.get("/chat/config")
+
+    assert response.status_code == 200
+    assert response.json()["live_rag_enabled"] is True
+
+
+def test_real_ai_option_exists_but_starts_disabled():
+    response = client.get("/chat")
+
+    assert response.status_code == 200
+
+    html = response.text
+
+    assert 'value="live-rag" disabled' in html
+    assert '"/chat/config"' in html
+    assert '"/ask/rag"' in html

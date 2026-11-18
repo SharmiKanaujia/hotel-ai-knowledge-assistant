@@ -1,11 +1,13 @@
-
+import os
 import json
 from pathlib import Path
-from rag.llm import generate_answer
-from fastapi import FastAPI
 from typing import Annotated
-from pydantic import BaseModel, StringConstraints
+
+from fastapi import FastAPI, HTTPException
 from fastapi.responses import FileResponse
+from pydantic import BaseModel, StringConstraints
+
+from rag.llm import generate_answer
 
 app = FastAPI(title="Hotel AI Knowledge Assistant")
 
@@ -31,6 +33,18 @@ with faq_path.open("r", encoding="utf-8") as file:
     hotel_faq = json.load(file)
 
 
+@app.get("/chat/config")
+def chat_config():
+    enabled = (
+        os.getenv("ENABLE_LIVE_RAG", "false").lower()
+        == "true"
+    )
+
+    return {
+        "live_rag_enabled": enabled
+    }
+
+
 @app.get("/")
 def home():
     return {"message": "Welcome to Hotel AI Assistant!"}
@@ -54,9 +68,19 @@ def ask_question(request: QuestionRequest):
         "answer": "I could not find that information.",
         "source": None
     }
+
 @app.post("/ask/rag")
 def ask_rag_question(request: QuestionRequest):
+
+    # Real AI is disabled unless explicitly enabled
+    if os.getenv("ENABLE_LIVE_RAG", "false").lower() != "true":
+        raise HTTPException(
+            status_code=503,
+            detail="Live AI mode is disabled."
+        )
+
     return generate_answer(request.question)
+
 
 
 @app.post("/ask/rag/demo")
