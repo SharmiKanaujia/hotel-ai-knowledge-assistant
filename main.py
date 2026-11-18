@@ -57,3 +57,23 @@ def ask_question(request: QuestionRequest):
 @app.post("/ask/rag")
 def ask_rag_question(request: QuestionRequest):
     return generate_answer(request.question)
+
+
+@app.post("/ask/rag/demo")
+def ask_rag_demo(request: QuestionRequest):
+    question = request.question.lower()
+
+    # Simulate a retrieved hotel document
+    if "park" in question or "car" in question:
+        return {
+            "question": request.question,
+            "answer": "Parking is available.",
+            "sources": ["parking.md"]
+        }
+
+    # Simulate an unknown answer
+    return {
+        "question": request.question,
+        "answer": "I could not find that information.",
+        "sources": []
+    }
