@@ -33,16 +33,24 @@ with faq_path.open("r", encoding="utf-8") as file:
     hotel_faq = json.load(file)
 
 
+
 @app.get("/chat/config")
 def chat_config():
-    enabled = (
+    live_enabled = (
         os.getenv("ENABLE_LIVE_RAG", "false").lower()
         == "true"
     )
 
+    demo_enabled = (
+        os.getenv("ENABLE_DEMO_RAG", "false").lower()
+        == "true"
+    )
+
     return {
-        "live_rag_enabled": enabled
+        "live_rag_enabled": live_enabled,
+        "demo_rag_enabled": demo_enabled
     }
+
 
 
 @app.get("/")
@@ -83,9 +91,19 @@ def ask_rag_question(request: QuestionRequest):
 
 
 
+
 @app.post("/ask/rag/demo")
 def ask_rag_demo(request: QuestionRequest):
+
+    # Keep simulated answers disabled by default
+    if os.getenv("ENABLE_DEMO_RAG", "false").lower() != "true":
+        raise HTTPException(
+            status_code=404,
+            detail="Demo AI mode is unavailable."
+        )
+
     question = request.question.lower()
+
 
     # Simulate a retrieved hotel document
     if "park" in question or "car" in question:
