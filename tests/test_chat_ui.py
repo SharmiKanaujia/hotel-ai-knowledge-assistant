@@ -60,3 +60,35 @@ def test_real_ai_option_exists_but_starts_disabled():
     assert 'value="live-rag" disabled' in html
     assert '"/chat/config"' in html
     assert '"/ask/rag"' in html
+
+
+def test_demo_config_disabled(monkeypatch):
+    monkeypatch.delenv("ENABLE_DEMO_RAG", raising=False)
+
+    response = client.get("/chat/config")
+
+    assert response.status_code == 200
+    assert response.json()["demo_rag_enabled"] is False
+
+
+def test_demo_config_enabled(monkeypatch):
+    monkeypatch.setenv("ENABLE_DEMO_RAG", "true")
+
+    response = client.get("/chat/config")
+
+    assert response.status_code == 200
+    assert response.json()["demo_rag_enabled"] is True
+
+
+def test_demo_option_starts_disabled():
+    response = client.get("/chat")
+
+    assert response.status_code == 200
+
+    html = response.text
+
+    # Demo mode must start disabled
+    assert 'value="rag" disabled' in html
+
+    # JavaScript must check the backend setting
+    assert "config.demo_rag_enabled" in html

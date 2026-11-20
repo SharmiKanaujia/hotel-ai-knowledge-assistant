@@ -102,11 +102,13 @@
       <label for="answer-mode">Answer Mode:</label>
 
 
+
 <select id="answer-mode">
   <option value="faq">FAQ - Quick Answers</option>
-  <option value="rag">AI Demo - Simulated Answers (No AWS)</option>
+  <option value="rag" disabled>AI Demo - Simulated Answers (No AWS)</option>
   <option value="live-rag" disabled>Real AI - Amazon Bedrock</option>
 </select>
+
     </div>
 
     <div id="messages" aria-live="polite">
@@ -135,12 +137,18 @@
   const answerMode = document.getElementById("answer-mode");
 
 
+
 async function loadChatConfig() {
+  const demoOption = answerMode.querySelector(
+    'option[value="rag"]'
+  );
+
   const liveOption = answerMode.querySelector(
     'option[value="live-rag"]'
   );
 
-  // Keep Real AI disabled until the server confirms availability
+  // Keep both AI modes disabled initially
+  demoOption.disabled = true;
   liveOption.disabled = true;
 
   try {
@@ -152,13 +160,24 @@ async function loadChatConfig() {
 
     const config = await response.json();
 
+    // Enable each mode only when the backend permits it
+    demoOption.disabled = config.demo_rag_enabled !== true;
     liveOption.disabled = config.live_rag_enabled !== true;
 
   } catch (error) {
     console.error("Chat configuration error:", error);
+
+    // If configuration fails, keep both modes disabled
+    demoOption.disabled = true;
     liveOption.disabled = true;
   }
+
+  // Return to FAQ if the selected mode is unavailable
+  if (answerMode.selectedOptions[0]?.disabled) {
+    answerMode.value = "faq";
+  }
 }
+
 
 loadChatConfig();
 
