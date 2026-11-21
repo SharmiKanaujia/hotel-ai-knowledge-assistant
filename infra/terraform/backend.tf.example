@@ -1,0 +1,13 @@
+
+# Template only — do not rename to backend.tf yet.
+# The private Terraform state bucket must exist first.
+
+terraform {
+  backend "s3" {
+    bucket       = "REPLACE_WITH_PRIVATE_STATE_BUCKET"
+    key          = "hotel-ai-copilot/dev/terraform.tfstate"
+    region       = "ap-southeast-2"
+    encrypt      = true
+    use_lockfile = true
+  }
+}
