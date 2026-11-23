@@ -1,142 +1,81 @@
 
+# Terraform State Management
 
-\# Terraform State Management
+## Overview
 
+Hotel AI Copilot uses Amazon S3 for remote Terraform state
+storage in the ap-southeast-2 AWS region.
 
+## Current Infrastructure
 
-\## Purpose
+The dedicated Terraform state bucket has been deployed.
 
+Verified security controls:
+- S3 Block Public Access enabled
+- AES-256 server-side encryption
+- S3 bucket versioning enabled
+- HTTPS-only bucket policy
+- S3-native state locking configured
 
+## State Organization
 
-Terraform state records the AWS resources managed
+Two Terraform projects use separate state keys:
 
-by this project.
+Bootstrap:
+bootstrap/terraform.tfstate
 
-
-
-Our goal is to store state securely in Amazon S3.
-
-
-
-\## Current Status
-
-
-
-\- Terraform configuration has been validated.
-
-\- No infrastructure has been applied.
-
-\- No remote state bucket has been created.
-
-\- `backend.tf.example` is an inactive template.
-
-
-
-\## Planned Remote State Architecture
-
-
-
-Terraform CLI
-
-&#x20;   |
-
-&#x20;   | Authenticated AWS access
-
-&#x20;   v
-
-Private S3 State Bucket
-
-&#x20;   |
-
-&#x20;   |-- Server-side encryption
-
-&#x20;   |-- Bucket versioning
-
-&#x20;   |-- Block public access
-
-&#x20;   |-- Restricted IAM permissions
-
-&#x20;   |-- TLS-only access
-
-&#x20;   |-- S3 lockfile for state locking
-
-&#x20;   |
-
-&#x20;   v
-
+Application:
 hotel-ai-copilot/dev/terraform.tfstate
 
+## Deployment Status
 
+### Terraform Bootstrap
 
-\## Bootstrap Strategy
+- S3 state bucket deployed successfully
+- Five AWS resources created
+- Bootstrap state migrated to S3
+- Remote state object verified
+- Terraform plan confirmed zero changes
 
+### Application Infrastructure
 
+- Remote S3 backend configured locally
+- Terraform initialization successful
+- Infrastructure plan generated successfully
+- Application resources have not been applied yet
 
-The state bucket must be created before Terraform
+## Developer Setup
 
-can use it as a backend.
+1. Configure the AWS CLI with an authorized profile.
+2. Copy backend.tf.example to backend.tf.
+3. Replace the placeholder with the correct S3 bucket name.
+4. Run terraform init.
+5. Review terraform plan before applying infrastructure.
 
+If migrating existing local state, back it up and use
+terraform init -migrate-state instead.
 
+## Security Guidelines
 
-1\. Create a dedicated private state bucket.
+- Never commit Terraform state or AWS credentials.
+- Keep backend.tf excluded from Git.
+- Keep state locking enabled.
+- Review all infrastructure changes before applying.
+- Use restricted IAM permissions for ongoing access.
+- Preserve state version history for recovery.
 
-2\. Enable encryption and versioning.
+## Bootstrap Recovery
 
-3\. Block all public access.
+The bootstrap project manages the bucket containing its own
+remote state.
 
-4\. Configure restricted IAM permissions.
+Avoid destroying or renaming the state bucket.
 
-5\. Enable state locking with use\_lockfile.
+Maintain a secure, encrypted recovery backup and verify remote
+state before deleting any older local backup.
 
-6\. Replace the placeholder in backend.tf.example.
+## Cost Management
 
-7\. Configure the actual backend.
+S3 storage and requests may incur charges.
 
-8\. Initialize and verify the remote backend.
-
-
-
-\## Security Rules
-
-
-
-\- Never commit terraform.tfstate to Git.
-
-\- Never commit AWS access keys.
-
-\- Do not disable state locking.
-
-\- Never run terraform apply without reviewing the plan.
-
-\- Use a separate bucket for Terraform state.
-
-\- Protect old state versions from accidental deletion.
-
-
-
-\## Cost Awareness
-
-
-
-Creating a backend can incur AWS storage and
-
-request charges.
-
-
-
-Review expected costs and billing protections
-
-before provisioning resources.
-
-
-
-\## Current Decision
-
-
-
-Documentation only. No infrastructure deployment
-
-is authorized by this step.
-
-
-
+Use AWS Budgets and monitor usage regularly.

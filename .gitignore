@@ -22,3 +22,7 @@ override.tf
 override.tf.json
 *_override.tf
 *_override.tf.json
+
+# Local Terraform backend configurations
+infra/terraform/backend.tf
+infra/terraform-bootstrap/backend.tf
