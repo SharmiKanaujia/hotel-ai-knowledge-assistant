@@ -15,6 +15,18 @@ RUN apt-get update && \
 COPY requirements.txt .
 RUN pip install --no-cache-dir -r requirements.txt
 
+
+# Store the AI embedding model inside the image
+ENV FASTEMBED_CACHE_PATH=/opt/fastembed_cache
+
+# Download and initialize the model during Docker build
+RUN python -c "from fastembed import TextEmbedding; model = TextEmbedding(model_name='BAAI/bge-small-en-v1.5'); list(model.embed(['warmup']))" \
+    && chmod -R a+rX /opt/fastembed_cache
+
+# Prevent Hugging Face downloads at runtime
+ENV HF_HUB_OFFLINE=1
+
+
 # Copy application code
 COPY . .
 
