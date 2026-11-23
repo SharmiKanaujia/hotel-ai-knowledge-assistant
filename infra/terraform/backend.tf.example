@@ -1,6 +1,7 @@
-
-# Template only — do not rename to backend.tf yet.
-# The private Terraform state bucket must exist first.
+# Example configuration for the application Terraform backend.
+# The dedicated S3 state bucket has already been deployed.
+# Copy this file to backend.tf and replace the bucket placeholder.
+# Never commit backend.tf or Terraform state files.
 
 terraform {
   backend "s3" {
