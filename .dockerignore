@@ -34,3 +34,12 @@ requirements-dev.txt
 
 # Docker local overrides
 docker-compose.override.yml
+
+# Infrastructure and Terraform state must never enter app images
+infra/
+**/.terraform/
+**/*.tfstate
+**/*.tfstate.*
+**/backend.tf
+**/*.tfvars
+**/*.tfvars.json
