@@ -1,10 +1,15 @@
 
 import numpy as np
 from fastembed import TextEmbedding
-
+from functools import lru_cache
 from retrieval.loader import load_documents
 from retrieval.chunker import chunk_documents
 
+@lru_cache(maxsize=1)
+def get_embedding_model():
+    return TextEmbedding(
+        model_name="BAAI/bge-small-en-v1.5"
+    )
 
 def search_semantic(
     question,
@@ -17,9 +22,7 @@ def search_semantic(
     if not chunks:
         return []
 
-    model = TextEmbedding(
-        model_name="BAAI/bge-small-en-v1.5"
-    )
+    model = get_embedding_model()
 
     # Convert document chunks into numerical vectors
     texts = [chunk["content"] for chunk in chunks]

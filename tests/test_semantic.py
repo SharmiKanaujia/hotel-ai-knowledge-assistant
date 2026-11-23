@@ -1,3 +1,5 @@
+from unittest.mock import patch
+from retrieval.semantic import get_embedding_model
 from retrieval.search import search_documents
 from retrieval.semantic import search_semantic
 
@@ -33,3 +35,21 @@ def test_semantic_search_keeps_relevant_breakfast_documents():
 
     assert len(results) > 0
     assert all(r["source"] == "dining.md" for r in results)
+
+def test_embedding_model_is_cached():
+    get_embedding_model.cache_clear()
+
+    try:
+        with patch("retrieval.semantic.TextEmbedding") as mock_model:
+            first_model = get_embedding_model()
+            second_model = get_embedding_model()
+
+            # Both calls should return the same object
+            assert first_model is second_model
+
+            # The model should be initialized only once
+            mock_model.assert_called_once_with(
+                model_name="BAAI/bge-small-en-v1.5"
+            )
+    finally:
+        get_embedding_model.cache_clear()
