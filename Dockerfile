@@ -1,6 +1,13 @@
 
 FROM python:3.13-slim
 
+# Add AWS Lambda Web Adapter
+COPY --from=public.ecr.aws/awsguru/aws-lambda-adapter:1.1.0 \
+    /lambda-adapter /opt/extensions/lambda-adapter
+
+# Tell the adapter where Uvicorn listens
+ENV AWS_LWA_PORT=8000
+
 WORKDIR /app
 
 ENV PYTHONDONTWRITEBYTECODE=1
