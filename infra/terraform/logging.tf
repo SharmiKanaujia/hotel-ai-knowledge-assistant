@@ -1,0 +1,11 @@
+
+# CloudWatch log group for our Lambda application
+resource "aws_cloudwatch_log_group" "lambda" {
+  name              = "/aws/lambda/${var.project_name}"
+  retention_in_days = 7
+
+  tags = {
+    Project     = var.project_name
+    Environment = "dev"
+  }
+}
