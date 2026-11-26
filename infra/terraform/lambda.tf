@@ -17,7 +17,7 @@ resource "aws_lambda_function" "app" {
   environment {
     variables = {
       AWS_LWA_PORT    = "8000"
-      ENABLE_LIVE_RAG = "false"
+      ENABLE_LIVE_RAG = "true"
       ENABLE_DEMO_RAG = "false"
     }
   }
