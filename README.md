@@ -216,7 +216,11 @@ The deployed function uses 1,024 MB of memory and a 30-second timeout.
 
 **Cost monitoring**
 
-An AWS monthly budget and actual-spending notification have been configured. AWS Budgets provides spending notifications rather than a hard spending limit.
+A monthly AWS cost budget is managed by Terraform in `infra/terraform/budget.tf`. It sends an email alert when actual spend passes 50%, 80% and 100% of the monthly limit. The limit and the alert email are Terraform variables (`monthly_budget_limit_usd` and `budget_alert_email`). The email is not stored in the repository: set it in an untracked `terraform.tfvars` file or with the `TF_VAR_budget_alert_email` environment variable.
+
+A separate zero-spend budget, created in the AWS console, sends an alert as soon as any charge appears.
+
+AWS Budgets provides spending notifications rather than a hard spending limit.
 
 These controls are appropriate for an educational proof of concept and do not constitute a complete production security assessment.
 
